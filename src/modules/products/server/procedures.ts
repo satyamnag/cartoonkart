@@ -214,8 +214,8 @@ export const productsRouter = createTRPCRouter({
         if (tagIds.length > 0) {
           where["tags"] = { in: tagIds };
         } else {
-          // No matching tags found, so return empty result
-          return { docs: [], totalDocs: 0, page: 1, totalPages: 0, hasNextPage: false, hasPrevPage: false };
+          // Force empty result without breaking pagination structure
+          where["id"] = { in: [] };
         }
       }
 
