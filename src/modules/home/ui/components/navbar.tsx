@@ -24,23 +24,18 @@ interface NavbarItemProps {
   isActive?: boolean;
 };
 
-const NavbarItem = ({
-  href,
-  children,
-  isActive,
-}: NavbarItemProps) => {
+const NavbarItem = ({ href, children, isActive }: NavbarItemProps) => {
   return (
     <Button
       asChild
       variant="outline"
       className={cn(
         "bg-transparent hover:bg-transparent rounded-full hover:border-primary border-transparent px-3.5 text-lg",
+        "h-full",                                    // fill navbar height
         isActive && "bg-black text-white hover:bg-black hover:text-white",
       )}
     >
-      <Link href={href}>
-        {children}
-      </Link>
+      <Link href={href}>{children}</Link>
     </Button>
   );
 };
@@ -62,7 +57,7 @@ export const Navbar = () => {
 
   return (
     <nav className="h-20 flex border-b justify-between font-medium bg-white">
-      <Link href="/" className="pl-6 flex items-center">
+      <Link href="/" className="pl-6 flex items-center h-full">
         <span className={cn("text-5xl font-semibold", poppins.className)}>
           cartoonkart
         </span>
