@@ -1,3 +1,4 @@
+// src/modules/home/ui/components/navbar.tsx
 "use client";
 
 import Link from "next/link";
@@ -31,7 +32,7 @@ const NavbarItem = ({ href, children, isActive }: NavbarItemProps) => {
       variant="outline"
       className={cn(
         "bg-transparent hover:bg-transparent rounded-full hover:border-primary border-transparent px-3.5 text-lg",
-        "h-full",                                    // fill navbar height
+        "h-full",
         isActive && "bg-black text-white hover:bg-black hover:text-white",
       )}
     >
@@ -108,7 +109,7 @@ export const Navbar = () => {
             className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 hover:text-black transition-colors text-lg"
           >
             <Link prefetch href="/sign-up">
-              Start selling
+              Sign up
             </Link>
           </Button>
         </div>
