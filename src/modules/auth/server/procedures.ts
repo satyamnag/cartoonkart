@@ -64,7 +64,7 @@ export const authRouter = createTRPCRouter({
       });
 
       // Set roles cookie from the logged-in user
-      await setRolesCookie(data.user.roles ?? []);
+      await setRolesCookie(data.user?.roles ?? []);
 
       return data;
     }),
@@ -86,7 +86,7 @@ export const authRouter = createTRPCRouter({
       });
 
       // Set roles cookie from the logged-in user
-      await setRolesCookie(data.user.roles ?? []);
+      await setRolesCookie(data.user?.roles ?? []);
 
       return data;
     }),
