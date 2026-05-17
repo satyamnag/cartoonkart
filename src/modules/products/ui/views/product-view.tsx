@@ -44,7 +44,7 @@ export const ProductView = ({ productId }: ProductViewProps) => {
             src={data.image?.url || "/placeholder.png"}
             alt={data.name}
             fill
-            className="object-cover"
+            className="object-contain"
           />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-6">
@@ -182,4 +182,4 @@ export const ProductViewSkeleton = () => {
       </div>
     </div>
   )
-}
+};
