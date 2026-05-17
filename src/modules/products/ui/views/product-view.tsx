@@ -3,11 +3,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Fragment, useState } from "react";
+import { Fragment, useState, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { CheckIcon, LinkIcon, StarIcon } from "lucide-react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { RichText } from "@payloadcms/richtext-lexical/react";
 
 import { useTRPC } from "@/trpc/client";
@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { StarRating } from "@/components/star-rating";
 import { formatCurrency } from "@/lib/utils";
+
+import { ReviewSidebar } from "@/modules/library/ui/components/review-sidebar";
 
 const CartButton = dynamic(
   () => import("../components/cart-button").then(
@@ -28,11 +30,12 @@ const CartButton = dynamic(
 
 interface ProductViewProps {
   productId: string;
-};
+}
 
 export const ProductView = ({ productId }: ProductViewProps) => {
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(trpc.products.getOne.queryOptions({ id: productId }));
+  const { data: session } = useQuery(trpc.auth.session.queryOptions());
 
   const [isCopied, setIsCopied] = useState(false);
 
@@ -133,6 +136,15 @@ export const ProductView = ({ productId }: ProductViewProps) => {
                 </p>
               </div>
 
+              {/* Review form for authenticated users */}
+              {session?.user && (
+                <div className="p-6 border-b">
+                  <Suspense fallback={<div className="text-sm text-muted-foreground">Loading review form...</div>}>
+                    <ReviewSidebar productId={productId} />
+                  </Suspense>
+                </div>
+              )}
+
               <div className="p-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-medium">Ratings</h3>
@@ -181,5 +193,5 @@ export const ProductViewSkeleton = () => {
         </div>
       </div>
     </div>
-  )
+  );
 };
