@@ -21,11 +21,31 @@ const setRolesCookie = async (roles: string[]) => {
   });
 };
 
-// Helper to delete both auth and roles cookies
+// Helper to delete both auth and roles cookies with correct attributes
 const clearAuthCookies = async () => {
   const cookies = await getCookies();
-  cookies.delete("payload-token");
-  cookies.delete("user-roles");
+
+  // Delete the auth token cookie (payload-token)
+  cookies.set({
+    name: "payload-token",
+    value: "",
+    path: "/",
+    maxAge: 0, // Expire immediately
+    ...(process.env.NODE_ENV !== "development" && {
+      sameSite: "none" as const,
+      domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+      secure: true,
+    }),
+  });
+
+  // Delete the roles cookie (user-roles)
+  cookies.set({
+    name: "user-roles",
+    value: "",
+    path: "/",
+    maxAge: 0,
+    secure: process.env.NODE_ENV === "production",
+  });
 };
 
 export const authRouter = createTRPCRouter({
