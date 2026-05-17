@@ -56,6 +56,9 @@ export const Navbar = () => {
   const trpc = useTRPC();
   const session = useQuery(trpc.auth.session.queryOptions());
 
+  const user = session.data?.user;
+  const isAdmin = user?.roles?.includes('super-admin') || user?.roles?.includes('product-manager');
+
   return (
     <nav className="h-20 flex border-b justify-between font-medium bg-white">
       <Link href="/" className="pl-6 flex items-center h-full">
@@ -82,16 +85,23 @@ export const Navbar = () => {
         ))}
       </div>
 
-      {session.data?.user ? (
+      {user ? (
         <div className="hidden lg:flex">
-          <Button
-            asChild
-            className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 hover:text-black transition-colors text-lg"
-          >
-            <Link href="/admin">
-              Dashboard
-            </Link>
-          </Button>
+          {isAdmin ? (
+            <Button
+              asChild
+              className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 hover:text-black transition-colors text-lg"
+            >
+              <Link href="/admin">Dashboard</Link>
+            </Button>
+          ) : (
+            <Button
+              asChild
+              className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 hover:text-black transition-colors text-lg"
+            >
+              <Link href="/library">Library</Link>
+            </Button>
+          )}
         </div>
       ) : (
         <div className="hidden lg:flex">
