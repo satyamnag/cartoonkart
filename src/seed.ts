@@ -9,21 +9,14 @@ const categories = [
   },
   {
     name: "Business & Money",
-    color: "#FFB347",
     slug: "business-money",
     subcategories: [
       { name: "Accounting", slug: "accounting" },
-      {
-        name: "Entrepreneurship",
-        slug: "entrepreneurship",
-      },
+      { name: "Entrepreneurship", slug: "entrepreneurship" },
       { name: "Gigs & Side Projects", slug: "gigs-side-projects" },
       { name: "Investing", slug: "investing" },
       { name: "Management & Leadership", slug: "management-leadership" },
-      {
-        name: "Marketing & Sales",
-        slug: "marketing-sales",
-      },
+      { name: "Marketing & Sales", slug: "marketing-sales" },
       { name: "Networking, Careers & Jobs", slug: "networking-careers-jobs" },
       { name: "Personal Finance", slug: "personal-finance" },
       { name: "Real Estate", slug: "real-estate" },
@@ -31,7 +24,6 @@ const categories = [
   },
   {
     name: "Software Development",
-    color: "#7EC8E3",
     slug: "software-development",
     subcategories: [
       { name: "Web Development", slug: "web-development" },
@@ -43,7 +35,6 @@ const categories = [
   },
   {
     name: "Writing & Publishing",
-    color: "#D8B5FF",
     slug: "writing-publishing",
     subcategories: [
       { name: "Fiction", slug: "fiction" },
@@ -59,7 +50,6 @@ const categories = [
   },
   {
     name: "Education",
-    color: "#FFE066",
     slug: "education",
     subcategories: [
       { name: "Online Courses", slug: "online-courses" },
@@ -70,7 +60,6 @@ const categories = [
   },
   {
     name: "Self Improvement",
-    color: "#96E6B3",
     slug: "self-improvement",
     subcategories: [
       { name: "Productivity", slug: "productivity" },
@@ -81,7 +70,6 @@ const categories = [
   },
   {
     name: "Fitness & Health",
-    color: "#FF9AA2",
     slug: "fitness-health",
     subcategories: [
       { name: "Workout Plans", slug: "workout-plans" },
@@ -92,7 +80,6 @@ const categories = [
   },
   {
     name: "Design",
-    color: "#B5B9FF",
     slug: "design",
     subcategories: [
       { name: "UI/UX", slug: "ui-ux" },
@@ -103,7 +90,6 @@ const categories = [
   },
   {
     name: "Drawing & Painting",
-    color: "#FFCAB0",
     slug: "drawing-painting",
     subcategories: [
       { name: "Watercolor", slug: "watercolor" },
@@ -115,7 +101,6 @@ const categories = [
   },
   {
     name: "Music",
-    color: "#FFD700",
     slug: "music",
     subcategories: [
       { name: "Songwriting", slug: "songwriting" },
@@ -126,7 +111,6 @@ const categories = [
   },
   {
     name: "Photography",
-    color: "#FF6B6B",
     slug: "photography",
     subcategories: [
       { name: "Portrait", slug: "portrait" },
@@ -136,7 +120,7 @@ const categories = [
       { name: "Macro", slug: "macro" },
     ],
   },
-]
+];
 
 const seed = async () => {
   const payload = await getPayload({ config });
@@ -169,7 +153,6 @@ const seed = async () => {
       data: {
         name: category.name,
         slug: category.slug,
-        color: category.color,
         parent: null,
       },
     });
@@ -185,7 +168,7 @@ const seed = async () => {
       });
     }
   }
-}
+};
 
 try {
   await seed();

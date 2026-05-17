@@ -1,3 +1,4 @@
+// src/modules/home/ui/components/search-filters/subcategory-menu.tsx
 import Link from "next/link";
 
 import { Category } from "@/payload-types";
@@ -17,7 +18,8 @@ export const SubcategoryMenu = ({
     return null;
   }
 
-  const backgroundColor = category.color || "#F5F5F5";
+  // Fixed background color, no longer uses category.color
+  const backgroundColor = "#F5F5F5";
 
   return (
     <div

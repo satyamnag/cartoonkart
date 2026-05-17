@@ -1,3 +1,4 @@
+// src/modules/home/ui/components/search-filters/categories-sidebar.tsx
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -69,7 +70,8 @@ export const CategoriesSidebar = ({
     }
   }
 
-  const backgroundColor = selectedCategory?.color || "white";
+  // Use a neutral white background always
+  const backgroundColor = "white";
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>

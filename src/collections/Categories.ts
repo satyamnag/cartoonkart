@@ -1,3 +1,4 @@
+// src/collections/Categories.ts
 import type { CollectionConfig } from "payload";
 
 import { isSuperAdmin } from "@/lib/access";
@@ -26,10 +27,6 @@ export const Categories: CollectionConfig = {
       required: true,
       unique: true,
       index: true,
-    },
-    {
-      name: "color",
-      type: "text",
     },
     {
       name: "parent",
