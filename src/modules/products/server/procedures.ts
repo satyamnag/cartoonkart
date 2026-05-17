@@ -169,7 +169,7 @@ export const productsRouter = createTRPCRouter({
         const categoriesData = await ctx.db.find({
           collection: "categories",
           limit: 1,
-          depth: 1, // Populate subcategories, subcategores.[0] will be a type of "Category"
+          depth: 1,
           pagination: false,
           where: {
             slug: {
@@ -202,9 +202,21 @@ export const productsRouter = createTRPCRouter({
       }
 
       if (input.tags && input.tags.length > 0) {
-        where["tags.name"] = {
-          in: input.tags,
-        };
+        const tagsData = await ctx.db.find({
+          collection: "tags",
+          where: {
+            name: { in: input.tags },
+          },
+          pagination: false,
+          depth: 0,
+        });
+        const tagIds = tagsData.docs.map((tag) => tag.id);
+        if (tagIds.length > 0) {
+          where["tags"] = { in: tagIds };
+        } else {
+          // No matching tags found, so return empty result
+          return { docs: [], totalDocs: 0, page: 1, totalPages: 0, hasNextPage: false, hasPrevPage: false };
+        }
       }
 
       if (input.search) {
