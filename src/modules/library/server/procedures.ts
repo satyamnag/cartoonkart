@@ -1,8 +1,9 @@
+// src/modules/library/server/procedures.ts
 import z from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { DEFAULT_LIMIT } from "@/constants";
-import { Media, Tenant } from "@/payload-types";
+import { Media } from "@/payload-types";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const libraryRouter = createTRPCRouter({
@@ -116,7 +117,6 @@ export const libraryRouter = createTRPCRouter({
         docs: dataWithSummarizedReviews.map((doc) => ({
           ...doc,
           image: doc.image as Media | null,
-          tenant: doc.tenant as Tenant & { image: Media | null },
         }))
       }
     }),

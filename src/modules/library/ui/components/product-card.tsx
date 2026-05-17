@@ -1,3 +1,4 @@
+// src/modules/library/ui/components/product-card.tsx
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,8 +8,6 @@ interface ProductCardProps {
   id: string;
   name: string;
   imageUrl?: string | null;
-  tenantSlug: string;
-  tenantImageUrl?: string | null;
   reviewRating: number;
   reviewCount: number;
 };
@@ -17,8 +16,6 @@ export const ProductCard = ({
   id,
   name,
   imageUrl,
-  tenantSlug,
-  tenantImageUrl,
   reviewRating,
   reviewCount,
 }: ProductCardProps) => {
@@ -35,18 +32,6 @@ export const ProductCard = ({
         </div>
         <div className="p-4 border-y flex flex-col gap-3 flex-1">
           <h2 className="text-lg font-medium line-clamp-4">{name}</h2>
-          <div className="flex items-center gap-2">
-            {tenantImageUrl && (
-              <Image
-                alt={tenantSlug}
-                src={tenantImageUrl}
-                width={16}
-                height={16}
-                className="rounded-full border shrink-0 size-[16px]"
-              />
-            )}
-            <p className="text-sm underline font-medium">{tenantSlug}</p>
-          </div>
           {reviewCount > 0 && (
             <div className="flex items-center gap-1">
               <StarIcon className="size-3.5 fill-black" />

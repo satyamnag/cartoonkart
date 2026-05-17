@@ -1,3 +1,4 @@
+// src/modules/products/ui/components/product-list.tsx
 "use client";
 
 import { InboxIcon } from "lucide-react";
@@ -13,11 +14,10 @@ import { useProductFilters } from "../../hooks/use-product-filters";
 
 interface Props {
   category?: string;
-  tenantSlug?: string;
   narrowView?: boolean;
 };
 
-export const ProductList = ({ category, tenantSlug, narrowView }: Props) => {
+export const ProductList = ({ category, narrowView }: Props) => {
   const [filters] = useProductFilters();
 
   const trpc = useTRPC();
@@ -30,7 +30,6 @@ export const ProductList = ({ category, tenantSlug, narrowView }: Props) => {
     {
       ...filters,
       category,
-      tenantSlug,
       limit: DEFAULT_LIMIT,
     },
     {
@@ -49,7 +48,6 @@ export const ProductList = ({ category, tenantSlug, narrowView }: Props) => {
     )
   }
 
-
   return (
     <>
       <div className={cn(
@@ -62,8 +60,6 @@ export const ProductList = ({ category, tenantSlug, narrowView }: Props) => {
             id={product.id}
             name={product.name}
             imageUrl={product.image?.url}
-            tenantSlug={product.tenant?.slug}
-            tenantImageUrl={product.tenant?.image?.url}
             reviewRating={product.reviewRating}
             reviewCount={product.reviewCount}
             price={product.price}
@@ -86,7 +82,7 @@ export const ProductList = ({ category, tenantSlug, narrowView }: Props) => {
   );
 };
 
-export const ProductListSkeleton = ({ narrowView }: Props) => {
+export const ProductListSkeleton = ({ narrowView }: { narrowView?: boolean }) => {
   return (
     <div className={cn(
       "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4",

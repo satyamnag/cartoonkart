@@ -1,3 +1,4 @@
+// src/modules/products/ui/views/product-view.tsx
 "use client";
 
 import Link from "next/link";
@@ -13,7 +14,7 @@ import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { StarRating } from "@/components/star-rating";
-import { formatCurrency, generateTenantURL } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 
 const CartButton = dynamic(
   () => import("../components/cart-button").then(
@@ -27,10 +28,9 @@ const CartButton = dynamic(
 
 interface ProductViewProps {
   productId: string;
-  tenantSlug: string;
 };
 
-export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
+export const ProductView = ({ productId }: ProductViewProps) => {
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(trpc.products.getOne.queryOptions({ id: productId }));
 
@@ -60,20 +60,7 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
               </div>
 
               <div className="px-6 py-4 flex items-center justify-center lg:border-r">
-                <Link href={generateTenantURL(tenantSlug)} className="flex items-center gap-2">
-                  {data.tenant.image?.url && (
-                    <Image
-                      src={data.tenant.image.url}
-                      alt={data.tenant.name}
-                      width={20}
-                      height={20}
-                      className="rounded-full border shrink-0 size-[20px]"
-                    />
-                  )}
-                  <p className="text-base underline font-medium">
-                    {data.tenant.name}
-                  </p>
-                </Link>
+                {/* removed tenant info */}
               </div>
 
               <div className="hidden lg:flex px-6 py-4 items-center justify-center">
@@ -119,7 +106,6 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
                   <CartButton
                     isPurchased={data.isPurchased}
                     productId={productId}
-                    tenantSlug={tenantSlug}
                   />
                   <Button
                     className="size-12"

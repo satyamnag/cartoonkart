@@ -1,58 +1,28 @@
+// src/modules/checkout/store/use-cart-store.ts
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-interface TenantCart {
-  productIds: string[];
-};
-
 interface CartState {
-  tenantCarts: Record<string, TenantCart>;
-  addProduct: (tenantSlug: string, productId: string) => void;
-  removeProduct: (tenantSlug: string, productId: string) => void;
-  clearCart: (tenantSlug: string) => void;
-  clearAllCarts: () => void;
+  productIds: string[];
+  addProduct: (productId: string) => void;
+  removeProduct: (productId: string) => void;
+  clearCart: () => void;
 };
 
 export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
-      tenantCarts: {},
-      addProduct: (tenantSlug, productId) => 
+      productIds: [],
+      addProduct: (productId) =>
         set((state) => ({
-          tenantCarts: {
-            ...state.tenantCarts,
-            [tenantSlug]: {
-              productIds: [
-                ...(state.tenantCarts[tenantSlug]?.productIds || []),
-                productId,
-              ]
-            }
-          }
+          productIds: [...state.productIds, productId],
         })),
-      removeProduct: (tenantSlug, productId) => 
+      removeProduct: (productId) =>
         set((state) => ({
-          tenantCarts: {
-            ...state.tenantCarts,
-            [tenantSlug]: {
-              productIds: state.tenantCarts[tenantSlug]?.productIds.filter(
-                (id) => id !== productId
-              ) || [],
-            }
-          }
+          productIds: state.productIds.filter((id) => id !== productId),
         })),
-      clearCart: (tenantSlug) => 
-        set((state) => ({
-          tenantCarts: {
-            ...state.tenantCarts,
-            [tenantSlug]: {
-              productIds: [],
-            },
-          },
-        })),
-      clearAllCarts: () => 
-        set({
-          tenantCarts: {},
-        }),
+      clearCart: () =>
+        set({ productIds: [] }),
     }),
     {
       name: "cartoonkart-cart",

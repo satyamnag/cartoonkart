@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+// src/middleware.ts
+import { NextResponse } from "next/server";
 
 export const config = {
   matcher: [
-     /*
+    /*
      * Match all paths except for:
      * 1. /api routes
      * 2. /_next (Next.js internals)
@@ -13,17 +14,6 @@ export const config = {
   ],
 };
 
-export default async function middleware(req: NextRequest) {
-  const url = req.nextUrl;
-  // Extract the hostname (e.g., "antonio.cartoonkart.com" or "john.localhost:3000")
-  const hostname = req.headers.get("host") || "";
-
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "";
-
-  if (hostname.endsWith(`.${rootDomain}`)) {
-    const tenantSlug = hostname.replace(`.${rootDomain}`, "");
-    return NextResponse.rewrite(new URL(`/tenants/${tenantSlug}${url.pathname}`, req.url));
-  }
-
+export default function middleware() {
   return NextResponse.next();
-};
+}

@@ -1,3 +1,4 @@
+// src/modules/checkout/ui/components/checkout-item.tsx
 import Link from "next/link";
 import Image from "next/image";
 
@@ -8,8 +9,6 @@ interface CheckoutItemProps {
   imageUrl?: string | null;
   name: string;
   productUrl: string;
-  tenantUrl: string;
-  tenantName: string;
   price: number;
   onRemove: () => void;
 };
@@ -19,8 +18,6 @@ export const CheckoutItem = ({
   imageUrl,
   name,
   productUrl,
-  tenantUrl,
-  tenantName,
   price,
   onRemove,
 }: CheckoutItemProps) => {
@@ -46,9 +43,6 @@ export const CheckoutItem = ({
         <div>
           <Link href={productUrl}>
             <h4 className="font-bold underline">{name}</h4>
-          </Link>
-          <Link href={tenantUrl}>
-            <p className="font-medium underline">{tenantName}</p>
           </Link>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import type { CollectionConfig } from "payload";
 
-import { Tenant } from "@/payload-types";
 import { isSuperAdmin } from "@/lib/access";
 
 export const Products: CollectionConfig = {
@@ -8,16 +7,13 @@ export const Products: CollectionConfig = {
   access: {
     create: ({ req }) => {
       if (isSuperAdmin(req.user)) return true;
-
-      const tenant = req.user?.tenants?.[0]?.tenant as Tenant
-
-      return Boolean(tenant?.stripeDetailsSubmitted);
+      return req.user?.roles?.includes("product-manager") ?? false;
     },
     delete: ({ req }) => isSuperAdmin(req.user),
   },
   admin: {
     useAsTitle: "name",
-    description: "You must verify your account before creating products"
+    description: "Manage digital products"
   },
   fields: [
     {

@@ -1,3 +1,4 @@
+// src/modules/checkout/ui/views/checkout-view.tsx
 "use client";
 
 import { toast } from "sonner";
@@ -7,21 +8,18 @@ import { InboxIcon, LoaderIcon } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useTRPC } from "@/trpc/client";
-import { generateTenantURL } from "@/lib/utils";
 
 import { useCart } from "../../hooks/use-cart";
 import { CheckoutItem } from "../components/checkout-item";
 import { CheckoutSidebar } from "../components/checkout-sidebar";
 import { useCheckoutStates } from "../../hooks/use-checkout-states";
 
-interface CheckoutViewProps {
-  tenantSlug: string;
-}
+interface CheckoutViewProps {}
 
-export const CheckoutView = ({ tenantSlug }: CheckoutViewProps) => {
+export const CheckoutView = ({}: CheckoutViewProps) => {
   const router = useRouter();
   const [states, setStates] = useCheckoutStates();
-  const { productIds, removeProduct, clearCart } = useCart(tenantSlug);
+  const { productIds, removeProduct, clearCart } = useCart();
   
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -38,7 +36,6 @@ export const CheckoutView = ({ tenantSlug }: CheckoutViewProps) => {
     },
     onError: (error) => {
       if (error.data?.code === "UNAUTHORIZED") {
-        // TODO: Modify when subdomains enabled
         router.push("/sign-in");
       }
 
@@ -102,9 +99,7 @@ export const CheckoutView = ({ tenantSlug }: CheckoutViewProps) => {
                 isLast={index === data.docs.length - 1}
                 imageUrl={product.image?.url}
                 name={product.name}
-                productUrl={`${generateTenantURL(product.tenant.slug)}/products/${product.id}`}
-                tenantUrl={generateTenantURL(product.tenant.slug)}
-                tenantName={product.tenant.name}
+                productUrl={`/products/${product.id}`}
                 price={product.price}
                 onRemove={() => removeProduct(product.id)}
               />
@@ -115,7 +110,7 @@ export const CheckoutView = ({ tenantSlug }: CheckoutViewProps) => {
         <div className="lg:col-span-3">
           <CheckoutSidebar
             total={data?.totalPrice || 0}
-            onPurchase={() => purchase.mutate({ tenantSlug, productIds })}
+            onPurchase={() => purchase.mutate({ productIds })}
             isCanceled={states.cancel}
             disabled={purchase.isPending}
           />

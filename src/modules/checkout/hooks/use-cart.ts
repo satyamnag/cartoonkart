@@ -1,46 +1,30 @@
+// src/modules/checkout/hooks/use-cart.ts
 import { useCallback } from "react";
-import { useShallow } from "zustand/react/shallow"
-
 import { useCartStore } from "../store/use-cart-store";
 
-export const useCart = (tenantSlug: string) => {
+export const useCart = () => {
+  const productIds = useCartStore((state) => state.productIds);
   const addProduct = useCartStore((state) => state.addProduct);
   const removeProduct = useCartStore((state) => state.removeProduct);
   const clearCart = useCartStore((state) => state.clearCart);
-  const clearAllCarts = useCartStore((state) => state.clearAllCarts);
-
-  const productIds = useCartStore(useShallow((state) => state.tenantCarts[tenantSlug]?.productIds || []));
 
   const toggleProduct = useCallback((productId: string) => {
     if (productIds.includes(productId)) {
-      removeProduct(tenantSlug, productId);
+      removeProduct(productId);
     } else {
-      addProduct(tenantSlug, productId);
+      addProduct(productId);
     }
-  }, [addProduct, removeProduct, productIds, tenantSlug]);
+  }, [productIds, addProduct, removeProduct]);
 
   const isProductInCart = useCallback((productId: string) => {
     return productIds.includes(productId);
   }, [productIds]);
 
-  const clearTenantCart = useCallback(() => {
-    clearCart(tenantSlug);
-  }, [tenantSlug, clearCart]);
-
-  const handleAddProduct = useCallback((productId: string) => {
-    addProduct(tenantSlug, productId);
-  }, [addProduct, tenantSlug]);
-
-  const handleRemoveProduct = useCallback((productId: string) => {
-    removeProduct(tenantSlug, productId);
-  }, [removeProduct, tenantSlug]);
-
   return {
     productIds,
-    addProduct: handleAddProduct,
-    removeProduct: handleRemoveProduct,
-    clearCart: clearTenantCart,
-    clearAllCarts,
+    addProduct,
+    removeProduct,
+    clearCart,
     toggleProduct,
     isProductInCart,
     totalItems: productIds.length,

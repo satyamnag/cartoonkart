@@ -1,3 +1,4 @@
+// src/modules/products/ui/components/cart-button.tsx
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -6,13 +7,12 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/modules/checkout/hooks/use-cart";
 
 interface Props {
-  tenantSlug: string;
   productId: string;
   isPurchased?: boolean;
 };
 
-export const CartButton = ({ tenantSlug, productId, isPurchased }: Props) => {
-  const cart = useCart(tenantSlug);
+export const CartButton = ({ productId, isPurchased }: Props) => {
+  const cart = useCart();
 
   if (isPurchased) {
     return (
