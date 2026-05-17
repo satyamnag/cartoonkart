@@ -29,7 +29,7 @@ export const ProductCard = ({
   return (
     <Link href={`/products/${id}`}>
       <div className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border rounded-md bg-white overflow-hidden h-full flex flex-col">
-        <div className="relative aspect-square">
+        <div className="relative aspect-square image-watermark">
           <Image
             alt={name}
             fill

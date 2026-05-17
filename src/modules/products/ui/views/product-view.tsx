@@ -39,7 +39,7 @@ export const ProductView = ({ productId }: ProductViewProps) => {
   return (
     <div className="px-4 lg:px-12 py-10">
       <div className="border rounded-sm bg-white overflow-hidden">
-        <div className="relative aspect-[3.9] border-b">
+        <div className="relative aspect-[3.9] border-b image-watermark">
           <Image
             src={data.image?.url || "/placeholder.png"}
             alt={data.name}

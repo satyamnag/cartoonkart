@@ -29,7 +29,7 @@ export const CheckoutItem = ({
       )}
     >
       <div className="overflow-hidden border-r">
-        <div className="relative aspect-square h-full">
+        <div className="relative aspect-square h-full image-watermark">
           <Image
             src={imageUrl || "/placeholder.png"}
             alt={name}
