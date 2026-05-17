@@ -1,3 +1,4 @@
+// src/modules/library/ui/components/product-list.tsx
 "use client";
 
 import { InboxIcon } from "lucide-react";
@@ -36,7 +37,6 @@ export const ProductList = () => {
     )
   }
 
-
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
@@ -46,8 +46,6 @@ export const ProductList = () => {
             id={product.id}
             name={product.name}
             imageUrl={product.image?.url}
-            tenantSlug={product.tenant?.slug}
-            tenantImageUrl={product.tenant?.image?.url}
             reviewRating={product.reviewRating}
             reviewCount={product.reviewCount}
           />
