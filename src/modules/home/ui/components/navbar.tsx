@@ -3,14 +3,23 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, UserIcon, LogOutIcon, BookOpenIcon, LayoutDashboardIcon } from "lucide-react";
 import { Poppins } from "next/font/google";
-import { usePathname } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { NavbarSidebar } from "./navbar-sidebar";
 
@@ -23,7 +32,7 @@ interface NavbarItemProps {
   href: string;
   children: React.ReactNode;
   isActive?: boolean;
-};
+}
 
 const NavbarItem = ({ href, children, isActive }: NavbarItemProps) => {
   return (
@@ -51,10 +60,18 @@ const navbarItems = [
 
 export const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const session = useQuery(trpc.auth.session.queryOptions());
+  const logout = useMutation(trpc.auth.logout.mutationOptions({
+    onSuccess: () => {
+      queryClient.invalidateQueries(trpc.auth.session.queryFilter());
+      router.push("/");
+    },
+  }));
 
   const user = session.data?.user;
   const isAdmin = user?.roles?.includes('super-admin') || user?.roles?.includes('product-manager');
@@ -86,22 +103,46 @@ export const Navbar = () => {
       </div>
 
       {user ? (
-        <div className="hidden lg:flex">
-          {isAdmin ? (
-            <Button
-              asChild
-              className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 hover:text-black transition-colors text-lg"
-            >
-              <Link href="/admin">Dashboard</Link>
-            </Button>
-          ) : (
-            <Button
-              asChild
-              className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 hover:text-black transition-colors text-lg"
-            >
-              <Link href="/library">Library</Link>
-            </Button>
-          )}
+        <div className="hidden lg:flex items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="h-full border-l border-t-0 border-b-0 border-r-0 px-6 rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
+              >
+                <UserIcon className="mr-2 size-5" />
+                {user.username}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" sideOffset={0}>
+              <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                {isAdmin && (
+                  <DropdownMenuItem onSelect={() => router.push("/admin")}>
+                    <LayoutDashboardIcon className="mr-2 size-4" />
+                    Dashboard
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onSelect={() => router.push("/library")}>
+                  <BookOpenIcon className="mr-2 size-4" />
+                  Library
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => router.push("/profile")}>
+                  <UserIcon className="mr-2 size-4" />
+                  Profile
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={() => logout.mutate()}
+                className="text-destructive focus:bg-destructive/10"
+              >
+                <LogOutIcon className="mr-2 size-4" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       ) : (
         <div className="hidden lg:flex">

@@ -21,6 +21,13 @@ const setRolesCookie = async (roles: string[]) => {
   });
 };
 
+// Helper to delete both auth and roles cookies
+const clearAuthCookies = async () => {
+  const cookies = await getCookies();
+  cookies.delete("payload-token");
+  cookies.delete("user-roles");
+};
+
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
     const headers = await getHeaders();
@@ -89,5 +96,10 @@ export const authRouter = createTRPCRouter({
       await setRolesCookie(data.user?.roles ?? []);
 
       return data;
+    }),
+  logout: baseProcedure
+    .mutation(async () => {
+      await clearAuthCookies();
+      return { success: true };
     }),
 });
