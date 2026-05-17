@@ -1,3 +1,4 @@
+// src/collections/Products.ts
 import type { CollectionConfig } from "payload";
 
 import { isSuperAdmin } from "@/lib/access";
@@ -5,7 +6,12 @@ import { isSuperAdmin } from "@/lib/access";
 export const Products: CollectionConfig = {
   slug: "products",
   access: {
+    read: () => true,
     create: ({ req }) => {
+      if (isSuperAdmin(req.user)) return true;
+      return req.user?.roles?.includes("product-manager") ?? false;
+    },
+    update: ({ req }) => {
       if (isSuperAdmin(req.user)) return true;
       return req.user?.roles?.includes("product-manager") ?? false;
     },
