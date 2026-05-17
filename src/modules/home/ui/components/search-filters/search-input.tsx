@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { CategoriesSidebar } from "./categories-sidebar";
+import { CheckoutButton } from "@/modules/checkout/ui/components/checkout-button";
 
 interface Props {
   disabled?: boolean;
@@ -55,6 +56,7 @@ export const SearchInput = ({
       >
         <ListFilterIcon />
       </Button>
+      <CheckoutButton hideIfEmpty />
       {session.data?.user && (
         <Button
           asChild
