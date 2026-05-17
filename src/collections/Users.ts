@@ -40,7 +40,7 @@ export const Users: CollectionConfig = {
       },
       name: "roles",
       type: "select",
-      defaultValue: ["user"],
+      defaultValue: [],
       hasMany: true,
       options: ["super-admin", "user", "product-manager"],
       access: {
