@@ -5,6 +5,7 @@ import Image from "next/image";
 import { StarIcon } from "lucide-react";
 
 import { formatCurrency } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
   id: string;
@@ -13,7 +14,8 @@ interface ProductCardProps {
   reviewRating: number;
   reviewCount: number;
   price: number;
-};
+  tags?: { id: string; name: string }[] | null;
+}
 
 export const ProductCard = ({
   id,
@@ -22,6 +24,7 @@ export const ProductCard = ({
   reviewRating,
   reviewCount,
   price,
+  tags,
 }: ProductCardProps) => {
   return (
     <Link href={`/products/${id}`}>
@@ -44,6 +47,15 @@ export const ProductCard = ({
               </p>
             </div>
           )}
+          {tags && tags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-auto">
+              {tags.map((tag) => (
+                <Badge key={tag.id} variant="secondary" className="text-xs">
+                  {tag.name}
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
         <div className="p-4">
           <div className="relative px-2 py-1 border bg-pink-400 w-fit">
@@ -54,7 +66,7 @@ export const ProductCard = ({
         </div>
       </div>
     </Link>
-  )
+  );
 };
 
 export const ProductCardSkeleton = () => {
