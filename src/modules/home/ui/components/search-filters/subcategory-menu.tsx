@@ -1,3 +1,4 @@
+// src/modules/home/ui/components/search-filters/subcategory-menu.tsx
 import Link from "next/link";
 
 import { Category } from "@/payload-types";
@@ -7,16 +8,12 @@ import { CategoriesGetManyOutput } from "@/modules/categories/types";
 interface Props {
   category: CategoriesGetManyOutput[1];
   isOpen: boolean;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
   onClose?: () => void;
 }
 
 export const SubcategoryMenu = ({
   category,
   isOpen,
-  onMouseEnter,
-  onMouseLeave,
   onClose,
 }: Props) => {
   if (!isOpen || !category.subcategories || category.subcategories.length === 0) {
@@ -32,10 +29,8 @@ export const SubcategoryMenu = ({
         top: "100%",
         left: 0,
       }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
     >
-      {/* Invisible bridge to maintain hover */}
+      {/* Invisible bridge to maintain click area */}
       <div className="h-3 w-60" />
       <div
         style={{ backgroundColor }}

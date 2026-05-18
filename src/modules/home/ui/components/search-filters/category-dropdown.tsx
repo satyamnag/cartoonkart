@@ -1,7 +1,8 @@
+// src/modules/home/ui/components/search-filters/category-dropdown.tsx
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,58 +23,38 @@ export const CategoryDropdown = ({
   isNavigationHovered,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const clearCloseTimeout = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-  }, []);
-
-  const openMenu = useCallback(() => {
-    clearCloseTimeout();
-    if (category.subcategories) {
-      setIsOpen(true);
-    }
-  }, [category.subcategories, clearCloseTimeout]);
-
-  const closeMenu = useCallback(() => {
-    closeTimeoutRef.current = setTimeout(() => {
-      setIsOpen(false);
-    }, 150);
-  }, [clearCloseTimeout]);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = useCallback(() => {
-    if (isOpen) {
-      setIsOpen(false);
-    } else {
-      openMenu();
+    if (category.subcategories?.length) {
+      setIsOpen((prev) => !prev);
     }
-  }, [isOpen, openMenu]);
+  }, [category.subcategories]);
 
-  const handleSubcategoryMenuEnter = () => {
-    clearCloseTimeout();
-  };
+  const closeMenu = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
-  const handleSubcategoryMenuLeave = () => {
-    closeMenu();
-  };
+  // Close when clicking outside
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        closeMenu();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, closeMenu]);
 
   const hasSubcategories = category.subcategories && category.subcategories.length > 0;
 
   return (
-    <div
-      className="relative"
-      ref={dropdownRef}
-      onMouseEnter={openMenu}
-      onMouseLeave={closeMenu}
-    >
+    <div className="relative" ref={containerRef}>
       <div className="relative">
         {hasSubcategories ? (
-          // For categories with subcategories, the button toggles the dropdown
           <Button
+            type="button"
             variant="elevated"
             onClick={toggleMenu}
             className={cn(
@@ -86,7 +67,6 @@ export const CategoryDropdown = ({
             {category.name}
           </Button>
         ) : (
-          // For categories without subcategories (or "all"), it's a direct link
           <Button
             variant="elevated"
             asChild
@@ -113,9 +93,7 @@ export const CategoryDropdown = ({
       <SubcategoryMenu
         category={category}
         isOpen={isOpen}
-        onMouseEnter={handleSubcategoryMenuEnter}
-        onMouseLeave={handleSubcategoryMenuLeave}
-        onClose={() => setIsOpen(false)}
+        onClose={closeMenu}
       />
     </div>
   );
