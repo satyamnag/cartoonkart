@@ -1,4 +1,6 @@
+// src/collections/Users.ts
 import type { CollectionConfig } from 'payload'
+import { cookies } from 'next/headers'
 
 import { isSuperAdmin } from '@/lib/access';
 
@@ -26,6 +28,22 @@ export const Users: CollectionConfig = {
         secure: true,
       }),
     }
+  },
+  hooks: {
+    afterLogin: [
+      ({ user }) => {
+        // Set the user-roles cookie so the admin middleware can authorise access
+        const cookieStore = cookies();
+        cookieStore.set({
+          name: "user-roles",
+          value: JSON.stringify(user.roles ?? []),
+          path: "/",
+          maxAge: 3600,
+          httpOnly: false,
+          secure: process.env.NODE_ENV === "production",
+        });
+      },
+    ],
   },
   fields: [
     {
