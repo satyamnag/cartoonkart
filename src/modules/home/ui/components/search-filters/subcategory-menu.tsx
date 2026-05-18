@@ -1,4 +1,3 @@
-// src/modules/home/ui/components/search-filters/subcategory-menu.tsx
 import Link from "next/link";
 
 import { Category } from "@/payload-types";
@@ -10,6 +9,7 @@ interface Props {
   isOpen: boolean;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  onClose?: () => void;
 }
 
 export const SubcategoryMenu = ({
@@ -17,6 +17,7 @@ export const SubcategoryMenu = ({
   isOpen,
   onMouseEnter,
   onMouseLeave,
+  onClose,
 }: Props) => {
   if (!isOpen || !category.subcategories || category.subcategories.length === 0) {
     return null;
@@ -41,10 +42,19 @@ export const SubcategoryMenu = ({
         className="w-60 text-black rounded-md overflow-hidden border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[2px] -translate-y-[2px]"
       >
         <div>
+          {/* Link to the parent category itself */}
+          <Link
+            href={`/${category.slug === "all" ? "" : category.slug}`}
+            onClick={onClose}
+            className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center font-medium border-b"
+          >
+            All {category.name}
+          </Link>
           {category.subcategories?.map((subcategory: Category) => (
             <Link
               key={subcategory.slug}
               href={`/${category.slug}/${subcategory.slug}`}
+              onClick={onClose}
               className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center underline font-medium"
             >
               {subcategory.name}
