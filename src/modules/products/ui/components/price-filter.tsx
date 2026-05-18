@@ -22,9 +22,9 @@ export const formatAsCurrency = (value: string) => {
   const numberValue = parseFloat(formattedValue);
   if (isNaN(numberValue)) return "";
 
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(numberValue);
@@ -56,7 +56,7 @@ export const PriceFilter = ({
         </Label>
         <Input
           type="text"
-          placeholder="$0"
+          placeholder="₹0"
           value={minPrice ? formatAsCurrency(minPrice) : ""}
           onChange={handleMinPriceChange}
         />
