@@ -57,12 +57,13 @@ export const CategoryDropdown = ({
     }
   }, [category.subcategories, clearCloseTimeout]);
 
-  // Close when clicking outside
+  // Close when clicking outside – delayed so link clicks can fire
   useEffect(() => {
     if (!isOpen) return;
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        // Delay the close to the next tick, allowing the click to navigate first
+        setTimeout(() => setIsOpen(false), 0);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
