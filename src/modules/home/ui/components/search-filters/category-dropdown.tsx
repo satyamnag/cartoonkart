@@ -57,9 +57,13 @@ export const CategoryDropdown = ({
             variant="elevated"
             onClick={toggleMenu}
             className={cn(
-              "h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black cursor-pointer",
+              "h-11 px-4 bg-transparent border-transparent rounded-full text-black cursor-pointer",
+              "hover:bg-white hover:border-primary",
+              // Override the built‑in hover translate to keep the button in place
+              "hover:!translate-x-0 hover:!translate-y-0",
               isActive && !isNavigationHovered && "bg-white border-primary",
-              isOpen && "bg-white border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              isOpen &&
+                "bg-white border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             )}
           >
             {category.name}
@@ -69,7 +73,8 @@ export const CategoryDropdown = ({
             variant="elevated"
             asChild
             className={cn(
-              "h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black",
+              "h-11 px-4 bg-transparent border-transparent rounded-full text-black",
+              "hover:bg-white hover:border-primary hover:!translate-x-0 hover:!translate-y-0",
               isActive && !isNavigationHovered && "bg-white border-primary"
             )}
           >

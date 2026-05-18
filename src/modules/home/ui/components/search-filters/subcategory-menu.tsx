@@ -29,7 +29,6 @@ export const SubcategoryMenu = ({
         left: 0,
       }}
     >
-      {/* Invisible bridge – pointer-events-none so clicks pass through */}
       <div className="h-3 w-60 pointer-events-none" />
       <div
         style={{ backgroundColor }}
