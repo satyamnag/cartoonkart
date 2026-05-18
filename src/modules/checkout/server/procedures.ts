@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { stripe } from "@/lib/stripe";
 import { Media } from "@/payload-types";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { headers as getHeaders } from "next/headers";
 
 export const checkoutRouter = createTRPCRouter({
   purchase: protectedProcedure
@@ -39,6 +40,12 @@ export const checkoutRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Products not found" });
       }
 
+      // Build dynamic base URL from the current request host
+      const headersList = await getHeaders();
+      const host = headersList.get("host") || headersList.get("x-forwarded-host") || process.env.NEXT_PUBLIC_APP_URL!;
+      const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+      const baseUrl = `${protocol}://${host}`;
+
       const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
         products.docs.map((product) => ({
           quantity: 1,
@@ -53,8 +60,8 @@ export const checkoutRouter = createTRPCRouter({
 
       const checkout = await stripe.checkout.sessions.create({
         customer_email: ctx.session.user.email,
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout?cancel=true`,
+        success_url: `${baseUrl}/checkout?success=true`,
+        cancel_url: `${baseUrl}/checkout?cancel=true`,
         mode: "payment",
         line_items: lineItems,
         invoice_creation: {
