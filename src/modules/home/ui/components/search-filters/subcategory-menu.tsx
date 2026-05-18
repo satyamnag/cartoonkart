@@ -6,19 +6,22 @@ import { Category } from "@/payload-types";
 import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 interface Props {
-  category: CategoriesGetManyOutput[1]
+  category: CategoriesGetManyOutput[1];
   isOpen: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export const SubcategoryMenu = ({
   category,
   isOpen,
+  onMouseEnter,
+  onMouseLeave,
 }: Props) => {
   if (!isOpen || !category.subcategories || category.subcategories.length === 0) {
     return null;
   }
 
-  // Fixed background color, no longer uses category.color
   const backgroundColor = "#F5F5F5";
 
   return (
@@ -28,6 +31,8 @@ export const SubcategoryMenu = ({
         top: "100%",
         left: 0,
       }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {/* Invisible bridge to maintain hover */}
       <div className="h-3 w-60" />

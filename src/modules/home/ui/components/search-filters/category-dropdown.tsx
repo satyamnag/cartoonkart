@@ -1,7 +1,8 @@
+// src/modules/home/ui/components/search-filters/category-dropdown.tsx
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -14,52 +15,66 @@ interface Props {
   category: CategoriesGetManyOutput[1];
   isActive?: boolean;
   isNavigationHovered?: boolean;
-};
+}
 
 export const CategoryDropdown = ({
   category,
   isActive,
-  isNavigationHovered
+  isNavigationHovered,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const onMouseEnter = () => {
+  const clearCloseTimeout = useCallback(() => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
+
+  const handleMouseEnter = () => {
+    clearCloseTimeout();
     if (category.subcategories) {
-      console.log("hello")
       setIsOpen(true);
     }
   };
 
-  const onMouseLeave = () => setIsOpen(false);
+  const handleMouseLeave = () => {
+    // Delay closing so the mouse can reach the subcategory menu
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
+  };
 
-  // TODO: Potentially improve mobile
-  // const toggleDropdown = () => {
-  //   if (category.subcategories?.docs?.length) {
-  //     setIsOpen(!isOpen);
-  //   }
-  // };
+  const handleSubcategoryMenuEnter = () => {
+    clearCloseTimeout();
+  };
+
+  const handleSubcategoryMenuLeave = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
+  };
 
   return (
     <div
       className="relative"
       ref={dropdownRef}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      // onClick={toggleDropdown}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="relative">
-        <Button 
+        <Button
           variant="elevated"
           className={cn(
             "h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black",
             isActive && !isNavigationHovered && "bg-white border-primary",
-            isOpen && "bg-white border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[4px] -translate-y-[4px]"
+            isOpen &&
+              "bg-white border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[4px] -translate-y-[4px]"
           )}
         >
-          <Link
-            href={`/${category.slug === "all" ? "" : category.slug}`}
-          >
+          <Link href={`/${category.slug === "all" ? "" : category.slug}`}>
             {category.name}
           </Link>
         </Button>
@@ -76,6 +91,8 @@ export const CategoryDropdown = ({
       <SubcategoryMenu
         category={category}
         isOpen={isOpen}
+        onMouseEnter={handleSubcategoryMenuEnter}
+        onMouseLeave={handleSubcategoryMenuLeave}
       />
     </div>
   );
