@@ -20,18 +20,31 @@ export default function middleware(req: NextRequest) {
 
   // Protect admin routes
   if (pathname.startsWith("/admin")) {
+    // Allow Payload's own login page and API routes to pass through
+    if (
+      pathname === "/admin/login" ||
+      pathname.startsWith("/admin/api") ||
+      pathname.startsWith("/admin/_next")
+    ) {
+      return NextResponse.next();
+    }
+
     const rolesCookie = req.cookies.get("user-roles")?.value;
     if (!rolesCookie) {
-      return NextResponse.redirect(new URL("/sign-in", req.url));
+      // Not authenticated yet – redirect to Payload's login page
+      return NextResponse.redirect(new URL("/admin/login", req.url));
     }
+
     try {
       const roles: string[] = JSON.parse(rolesCookie);
       const isAdmin = roles.includes("super-admin") || roles.includes("product-manager");
       if (!isAdmin) {
+        // Authenticated but not an admin – send to library
         return NextResponse.redirect(new URL("/library", req.url));
       }
     } catch {
-      return NextResponse.redirect(new URL("/sign-in", req.url));
+      // Corrupted cookie – redirect to login
+      return NextResponse.redirect(new URL("/admin/login", req.url));
     }
   }
 
