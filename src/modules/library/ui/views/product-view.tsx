@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, Download } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { RichText } from "@payloadcms/richtext-lexical/react";
 
 import { useTRPC } from "@/trpc/client";
+import { Media } from "@/payload-types"; // Import the Media type
 
 import { ReviewSidebar } from "../components/review-sidebar";
 import { ReviewFormSkeleton } from "../components/review-form";
@@ -20,6 +21,9 @@ export const ProductView = ({ productId }: Props) => {
   const { data } = useSuspenseQuery(trpc.library.getOne.queryOptions({
     productId,
   }));
+
+  // Cast to Media to access the URL property safely
+  const image = data.image as Media | null;
 
   return (
     <div className="min-h-screen bg-white">
@@ -36,7 +40,6 @@ export const ProductView = ({ productId }: Props) => {
       </header>
       <section className="max-w-(--breakpoint-xl) mx-auto px-4 lg:px-12 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 lg:gap-16">
-
           <div className="lg:col-span-2">
             <div className="p-4 bg-white rounded-md border gap-4">
               <Suspense fallback={<ReviewFormSkeleton />}>
@@ -46,15 +49,27 @@ export const ProductView = ({ productId }: Props) => {
           </div>
 
           <div className="lg:col-span-5">
-            {data.content ? 
+            {data.content ? (
               <RichText data={data.content} />
-            : (
+            ) : (
               <p className="font-medium italic text-muted-foreground">
                 No special content
               </p>
             )}
-          </div>
 
+            {image?.url && (
+              <div className="mt-6">
+                <a
+                  href={image.url}
+                  download
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-pink-400 text-white rounded-md hover:bg-pink-500 transition-colors font-medium text-sm"
+                >
+                  <Download className="size-4" />
+                  Download File
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       </section>
     </div>

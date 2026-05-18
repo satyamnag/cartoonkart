@@ -6,8 +6,6 @@ import { NextResponse } from "next/server";
 
 import { stripe } from "@/lib/stripe";
 
-import { ExpandedLineItem } from "@/modules/checkout/types";
-
 export async function POST(req: Request) {
   let event: Stripe.Event;
 
@@ -40,54 +38,56 @@ export async function POST(req: Request) {
   const payload = await getPayload({ config });
 
   if (permittedEvents.includes(event.type)) {
-    let data;
-
     try {
       switch (event.type) {
-        case "checkout.session.completed":
-          data = event.data.object as Stripe.Checkout.Session;
+        case "checkout.session.completed": {
+          const data = event.data.object as Stripe.Checkout.Session;
 
           if (!data.metadata?.userId) {
             throw new Error("User ID is required");
           }
+          if (!data.metadata?.productIds) {
+            throw new Error("Product IDs are required");
+          }
 
+          const userId = data.metadata.userId;
+          const productIds: string[] = JSON.parse(data.metadata.productIds);
+
+          // Verify user exists
           const user = await payload.findByID({
             collection: "users",
-            id: data.metadata.userId,
+            id: userId,
           });
-
           if (!user) {
             throw new Error("User not found");
           }
 
-          const expandedSession = await stripe.checkout.sessions.retrieve(
-            data.id,
-            {
-              expand: ["line_items.data.price.product"],
-            },
-          );
+          // Create an order for each product (skip duplicates)
+          for (const productId of productIds) {
+            const existing = await payload.find({
+              collection: "orders",
+              where: {
+                and: [
+                  { stripeCheckoutSessionId: { equals: data.id } },
+                  { product: { equals: productId } },
+                ],
+              },
+              limit: 1,
+            });
+            if (existing.docs.length > 0) continue;
 
-          if (
-            !expandedSession.line_items?.data ||
-            !expandedSession.line_items.data.length
-          ) {
-            throw new Error("No line items found");
-          }
-
-          const lineItems = expandedSession.line_items.data as ExpandedLineItem[];
-
-          for (const item of lineItems) {
             await payload.create({
               collection: "orders",
               data: {
                 stripeCheckoutSessionId: data.id,
-                user: user.id,
-                product: item.price.product.metadata.id,
-                name: item.price.product.name,
+                user: userId,
+                product: productId,
+                name: `Order for session ${data.id}`,
               },
             });
           }
           break;
+        }
         default:
           throw new Error(`Unhandled event: ${event.type}`);
       }

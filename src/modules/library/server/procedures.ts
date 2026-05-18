@@ -46,6 +46,7 @@ export const libraryRouter = createTRPCRouter({
       const product = await ctx.db.findByID({
         collection: "products",
         id: input.productId,
+        depth: 1, // Populate "image" so we have the URL
       });
 
       if (!product) {

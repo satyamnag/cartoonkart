@@ -62,6 +62,7 @@ export const checkoutRouter = createTRPCRouter({
         },
         metadata: {
           userId: ctx.session.user.id,
+          productIds: JSON.stringify(input.productIds), // Store product IDs for the webhook
         },
       });
 
