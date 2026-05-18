@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,46 +23,13 @@ export const CategoryDropdown = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const clearCloseTimeout = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-  }, []);
-
-  const scheduleClose = useCallback(() => {
-    clearCloseTimeout();
-    closeTimeoutRef.current = setTimeout(() => {
-      setIsOpen(false);
-    }, 150);
-  }, [clearCloseTimeout]);
-
-  const openMenu = useCallback(() => {
-    clearCloseTimeout();
-    if (category.subcategories?.length) {
-      setIsOpen(true);
-    }
-  }, [category.subcategories, clearCloseTimeout]);
-
-  const closeMenu = useCallback(() => {
-    scheduleClose();
-  }, [scheduleClose]);
-
-  const toggleMenu = useCallback(() => {
-    clearCloseTimeout();
-    if (category.subcategories?.length) {
-      setIsOpen((prev) => !prev);
-    }
-  }, [category.subcategories, clearCloseTimeout]);
-
-  // Close when clicking outside – allow click to complete before unmounting
+  // Close when clicking outside
   useEffect(() => {
     if (!isOpen) return;
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setTimeout(() => setIsOpen(false), 0);
+        setIsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -75,20 +42,20 @@ export const CategoryDropdown = ({
     <div
       className="relative"
       ref={containerRef}
-      onMouseEnter={openMenu}
-      onMouseLeave={closeMenu}
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
     >
       <div className="relative">
         {hasSubcategories ? (
-          // ⬇️ Plain button – does NOT navigate, only toggles dropdown
+          // Toggle button – does not navigate
           <Button
             type="button"
             variant="elevated"
-            onClick={toggleMenu}
+            onClick={() => setIsOpen((prev) => !prev)}
             className={cn(
               "h-11 px-4 bg-transparent border-transparent rounded-full text-black cursor-pointer",
               "hover:bg-white hover:border-primary",
-              "hover:!translate-x-0 hover:!translate-y-0", // keep it in place
+              "hover:!translate-x-0 hover:!translate-y-0",
               isActive && !isNavigationHovered && "bg-white border-primary",
               isOpen && "bg-white border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             )}
@@ -96,7 +63,7 @@ export const CategoryDropdown = ({
             {category.name}
           </Button>
         ) : (
-          // ⬇️ Direct link for categories without subcategories
+          // Direct link for categories without subcategories
           <Button
             variant="elevated"
             asChild
@@ -124,8 +91,6 @@ export const CategoryDropdown = ({
       <SubcategoryMenu
         category={category}
         isOpen={isOpen}
-        onMouseEnter={openMenu}
-        onMouseLeave={closeMenu}
       />
     </div>
   );
