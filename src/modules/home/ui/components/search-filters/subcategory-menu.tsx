@@ -8,12 +8,16 @@ interface Props {
   category: CategoriesGetManyOutput[1];
   isOpen: boolean;
   onClose?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export const SubcategoryMenu = ({
   category,
   isOpen,
   onClose,
+  onMouseEnter,
+  onMouseLeave,
 }: Props) => {
   if (!isOpen || !category.subcategories || category.subcategories.length === 0) {
     return null;
@@ -28,6 +32,8 @@ export const SubcategoryMenu = ({
         top: "100%",
         left: 0,
       }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <div className="h-3 w-60 pointer-events-none" />
       <div
