@@ -23,6 +23,26 @@ export const CategoryDropdown = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear any pending close
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  // Schedule a close that doesn’t interrupt an in‑flight click
+  const scheduleClose = () => {
+    clearCloseTimer();
+    closeTimerRef.current = setTimeout(() => setIsOpen(false), 0);
+  };
+
+  const openMenu = () => {
+    clearCloseTimer();
+    if (category.subcategories?.length) setIsOpen(true);
+  };
 
   // Close when clicking outside
   useEffect(() => {
@@ -39,19 +59,15 @@ export const CategoryDropdown = ({
   const hasSubcategories = category.subcategories && category.subcategories.length > 0;
 
   return (
-    <div
-      className="relative"
-      ref={containerRef}
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
+    <div className="relative" ref={containerRef}>
       <div className="relative">
         {hasSubcategories ? (
-          // Toggle button – does not navigate
           <Button
             type="button"
             variant="elevated"
             onClick={() => setIsOpen((prev) => !prev)}
+            onMouseEnter={openMenu}
+            onMouseLeave={scheduleClose}
             className={cn(
               "h-11 px-4 bg-transparent border-transparent rounded-full text-black cursor-pointer",
               "hover:bg-white hover:border-primary",
@@ -63,7 +79,6 @@ export const CategoryDropdown = ({
             {category.name}
           </Button>
         ) : (
-          // Direct link for categories without subcategories
           <Button
             variant="elevated"
             asChild
@@ -91,6 +106,8 @@ export const CategoryDropdown = ({
       <SubcategoryMenu
         category={category}
         isOpen={isOpen}
+        onMouseEnter={openMenu}
+        onMouseLeave={scheduleClose}
       />
     </div>
   );

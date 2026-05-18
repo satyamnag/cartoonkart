@@ -7,11 +7,15 @@ import { CategoriesGetManyOutput } from "@/modules/categories/types";
 interface Props {
   category: CategoriesGetManyOutput[1];
   isOpen: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export const SubcategoryMenu = ({
   category,
   isOpen,
+  onMouseEnter,
+  onMouseLeave,
 }: Props) => {
   if (!isOpen || !category.subcategories || category.subcategories.length === 0) {
     return null;
@@ -22,17 +26,15 @@ export const SubcategoryMenu = ({
   return (
     <div
       className="absolute z-100"
-      style={{
-        top: "100%",
-        left: 0,
-      }}
+      style={{ top: "100%", left: 0 }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <div
         style={{ backgroundColor }}
         className="w-60 text-black rounded-md overflow-hidden border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
       >
         <div>
-          {/* Parent category link */}
           <Link
             href={`/${category.slug === "all" ? "" : category.slug}`}
             className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center font-medium border-b"
