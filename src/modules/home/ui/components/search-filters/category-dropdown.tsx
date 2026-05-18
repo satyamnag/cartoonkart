@@ -122,7 +122,6 @@ export const CategoryDropdown = ({
       <SubcategoryMenu
         category={category}
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
         onMouseEnter={openMenu}
         onMouseLeave={closeMenu}
       />

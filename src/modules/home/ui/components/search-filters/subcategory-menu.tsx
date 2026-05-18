@@ -7,7 +7,6 @@ import { CategoriesGetManyOutput } from "@/modules/categories/types";
 interface Props {
   category: CategoriesGetManyOutput[1];
   isOpen: boolean;
-  onClose?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }
@@ -15,7 +14,6 @@ interface Props {
 export const SubcategoryMenu = ({
   category,
   isOpen,
-  onClose,
   onMouseEnter,
   onMouseLeave,
 }: Props) => {
@@ -43,7 +41,6 @@ export const SubcategoryMenu = ({
         <div>
           <Link
             href={`/${category.slug === "all" ? "" : category.slug}`}
-            onClick={onClose}
             className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center font-medium border-b"
           >
             All {category.name}
@@ -52,7 +49,6 @@ export const SubcategoryMenu = ({
             <Link
               key={subcategory.slug}
               href={`/${category.slug}/${subcategory.slug}`}
-              onClick={onClose}
               className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center underline font-medium"
             >
               {subcategory.name}
