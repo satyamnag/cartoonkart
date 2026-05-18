@@ -1,3 +1,4 @@
+// src/modules/home/ui/components/search-filters/subcategory-menu.tsx
 import Link from "next/link";
 
 import { Category } from "@/payload-types";
