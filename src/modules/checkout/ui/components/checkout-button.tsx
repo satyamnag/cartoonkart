@@ -21,7 +21,16 @@ export const CheckoutButton = ({
   if (hideIfEmpty && totalItems === 0) return null;
 
   return (
-    <Button variant="elevated" asChild className={cn("bg-white", className)}>
+    <Button
+      variant="elevated"
+      asChild
+      className={cn(
+        "bg-white cursor-pointer",
+        // Prevent the built‑in hover translate from breaking the click target
+        "hover:!translate-x-0 hover:!translate-y-0",
+        className
+      )}
+    >
       <Link href="/checkout">
         <ShoppingCartIcon /> {totalItems > 0 ? totalItems : ""}
       </Link>
