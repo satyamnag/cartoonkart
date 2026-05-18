@@ -51,7 +51,6 @@ const NavbarItem = ({ href, children, isActive }: NavbarItemProps) => {
 };
 
 const navbarItems = [
-  { href: "/", children: "Home" },
   { href: "/about", children: "About" },
   { href: "/features", children: "Features" },
   { href: "/pricing", children: "Pricing" },
