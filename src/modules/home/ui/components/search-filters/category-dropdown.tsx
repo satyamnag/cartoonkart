@@ -57,12 +57,11 @@ export const CategoryDropdown = ({
     }
   }, [category.subcategories, clearCloseTimeout]);
 
-  // Close when clicking outside – delayed so link clicks can fire
+  // Close when clicking outside – allow click to complete before unmounting
   useEffect(() => {
     if (!isOpen) return;
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        // Delay the close to the next tick, allowing the click to navigate first
         setTimeout(() => setIsOpen(false), 0);
       }
     };
@@ -81,6 +80,7 @@ export const CategoryDropdown = ({
     >
       <div className="relative">
         {hasSubcategories ? (
+          // ⬇️ Plain button – does NOT navigate, only toggles dropdown
           <Button
             type="button"
             variant="elevated"
@@ -88,7 +88,7 @@ export const CategoryDropdown = ({
             className={cn(
               "h-11 px-4 bg-transparent border-transparent rounded-full text-black cursor-pointer",
               "hover:bg-white hover:border-primary",
-              "hover:!translate-x-0 hover:!translate-y-0",
+              "hover:!translate-x-0 hover:!translate-y-0", // keep it in place
               isActive && !isNavigationHovered && "bg-white border-primary",
               isOpen && "bg-white border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             )}
@@ -96,6 +96,7 @@ export const CategoryDropdown = ({
             {category.name}
           </Button>
         ) : (
+          // ⬇️ Direct link for categories without subcategories
           <Button
             variant="elevated"
             asChild

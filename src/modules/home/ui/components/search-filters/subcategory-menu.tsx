@@ -1,4 +1,3 @@
-// src/modules/home/ui/components/search-filters/subcategory-menu.tsx
 import Link from "next/link";
 
 import { Category } from "@/payload-types";
@@ -34,14 +33,14 @@ export const SubcategoryMenu = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      {/* Invisible bridge – pointer-events-none so clicks pass through */}
+      {/* Invisible bridge – pointer‑events‑none so clicks pass through */}
       <div className="h-3 w-60 pointer-events-none" />
       <div
         style={{ backgroundColor }}
         className="w-60 text-black rounded-md overflow-hidden border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
       >
         <div>
-          {/* Link to the parent category itself */}
+          {/* Parent category link – appears first in the dropdown */}
           <Link
             href={`/${category.slug === "all" ? "" : category.slug}`}
             className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center font-medium border-b"
