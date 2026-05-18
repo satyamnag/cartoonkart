@@ -31,9 +31,9 @@ export const Users: CollectionConfig = {
   },
   hooks: {
     afterLogin: [
-      ({ user }) => {
+      async ({ user }) => {
         // Set the user-roles cookie so the admin middleware can authorise access
-        const cookieStore = cookies();
+        const cookieStore = await cookies();
         cookieStore.set({
           name: "user-roles",
           value: JSON.stringify(user.roles ?? []),
