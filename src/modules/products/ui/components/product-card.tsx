@@ -27,14 +27,15 @@ export const ProductCard = ({
   tags,
 }: ProductCardProps) => {
   return (
-    <Link href={`/products/${id}`}>
-      <div className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border rounded-md bg-white overflow-hidden h-full flex flex-col">
+    <Link href={`/products/${id}`} prefetch>
+      <div className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border rounded-md bg-white overflow-hidden h-full flex flex-col cursor-pointer">
         <div className="relative aspect-square image-watermark">
           <Image
             alt={name}
             fill
             src={imageUrl || "/placeholder.png"}
-            className="object-cover"
+            className="object-cover pointer-events-none"
+            priority={false}
           />
         </div>
         <div className="p-4 border-y flex flex-col gap-3 flex-1">
