@@ -67,8 +67,8 @@ export const SignInView = () => {
             className="flex flex-col gap-8 p-4 lg:p-16"
           >
             <div className="flex items-center justify-between mb-8">
-              <Link href="/">
-                <span className={cn("text-2xl font-semibold", poppins.className)}>
+              <Link href="/" className="inline-block p-2 -m-2 cursor-pointer">
+                <span className={cn("text-2xl font-semibold pointer-events-none", poppins.className)}>
                   cartoonkart
                 </span>
               </Link>

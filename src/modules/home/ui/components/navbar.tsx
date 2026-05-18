@@ -78,8 +78,8 @@ export const Navbar = () => {
 
   return (
     <nav className="h-20 flex border-b justify-between font-medium bg-white">
-      <Link href="/" className="pl-6 flex items-center h-full">
-        <span className={cn("text-5xl font-semibold", poppins.className)}>
+      <Link href="/" className="pl-6 flex items-center h-full cursor-pointer">
+        <span className={cn("text-5xl font-semibold pointer-events-none", poppins.className)}>
           cartoonkart
         </span>
       </Link>
