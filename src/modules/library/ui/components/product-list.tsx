@@ -17,16 +17,19 @@ export const ProductList = () => {
     hasNextPage, 
     isFetchingNextPage, 
     fetchNextPage
-  } = useSuspenseInfiniteQuery(trpc.library.getMany.infiniteQueryOptions(
-    {
-      limit: DEFAULT_LIMIT,
-    },
-    {
-      getNextPageParam: (lastPage) => {
-        return lastPage.docs.length > 0 ? lastPage.nextPage : undefined;
+  } = useSuspenseInfiniteQuery(
+    trpc.library.getMany.infiniteQueryOptions(
+      {
+        limit: DEFAULT_LIMIT,
       },
-    }
-  ));
+      {
+        getNextPageParam: (lastPage) => {
+          return lastPage.docs.length > 0 ? lastPage.nextPage : undefined;
+        },
+        staleTime: 0, // Always refetch to get latest purchases
+      }
+    )
+  );
 
   if (data.pages?.[0]?.docs.length === 0) {
     return (
