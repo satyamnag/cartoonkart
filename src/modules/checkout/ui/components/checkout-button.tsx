@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { ShoppingCartIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 import { useCart } from "../../hooks/use-cart";
@@ -21,19 +20,21 @@ export const CheckoutButton = ({
   if (hideIfEmpty && totalItems === 0) return null;
 
   return (
-    <Button
-      variant="elevated"
-      asChild
+    <Link
+      href="/checkout"
       className={cn(
-        "bg-white cursor-pointer",
-        // Prevent the built‑in hover translate from breaking the click target
-        "hover:!translate-x-0 hover:!translate-y-0",
+        // Elevated button style
+        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-base font-medium transition-all",
+        "bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
+        "h-12 px-4 py-2 has-[>svg]:px-3",
+        "cursor-pointer",
+        // Prevent any hover translation
+        "hover:translate-x-0 hover:translate-y-0",
         className
       )}
     >
-      <Link href="/checkout">
-        <ShoppingCartIcon /> {totalItems > 0 ? totalItems : ""}
-      </Link>
-    </Button>
+      <ShoppingCartIcon />
+      {totalItems > 0 ? totalItems : ""}
+    </Link>
   );
 };
