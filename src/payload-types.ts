@@ -185,7 +185,6 @@ export interface Category {
   id: string;
   name: string;
   slug: string;
-  color?: string | null;
   parent?: (string | null) | Category;
   subcategories?: {
     docs?: (string | Category)[];
@@ -220,7 +219,7 @@ export interface Product {
     [k: string]: unknown;
   } | null;
   /**
-   * Price in USD
+   * Price in INR
    */
   price: number;
   category?: (string | null) | Category;
@@ -444,7 +443,6 @@ export interface MediaSelect<T extends boolean = true> {
 export interface CategoriesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
-  color?: T;
   parent?: T;
   subcategories?: T;
   updatedAt?: T;
