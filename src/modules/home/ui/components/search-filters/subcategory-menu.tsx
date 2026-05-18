@@ -1,4 +1,3 @@
-// src/modules/home/ui/components/search-filters/subcategory-menu.tsx
 import Link from "next/link";
 
 import { Category } from "@/payload-types";
@@ -30,8 +29,8 @@ export const SubcategoryMenu = ({
         left: 0,
       }}
     >
-      {/* Invisible bridge to maintain click area */}
-      <div className="h-3 w-60" />
+      {/* Invisible bridge – now pointer-events-none so clicks pass through */}
+      <div className="h-3 w-60 pointer-events-none" />
       <div
         style={{ backgroundColor }}
         className="w-60 text-black rounded-md overflow-hidden border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-x-[2px] -translate-y-[2px]"
