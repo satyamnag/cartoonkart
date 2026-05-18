@@ -3,7 +3,7 @@
 
 import { toast } from "sonner";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { InboxIcon, LoaderIcon } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -18,47 +18,63 @@ interface CheckoutViewProps {}
 
 export const CheckoutView = ({}: CheckoutViewProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [states, setStates] = useCheckoutStates();
   const { productIds, removeProduct, clearCart } = useCart();
-  
+
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { data, error, isLoading } = useQuery(trpc.checkout.getProducts.queryOptions({
-    ids: productIds,
-  }));
+  const { data, error, isLoading } = useQuery(
+    trpc.checkout.getProducts.queryOptions({ ids: productIds })
+  );
 
-  const purchase = useMutation(trpc.checkout.purchase.mutationOptions({
-    onMutate: () => {
-      setStates({ success: false, cancel: false });
-    },
-    onSuccess: (data) => {
-      window.location.href = data.url;
-    },
-    onError: (error) => {
-      if (error.data?.code === "UNAUTHORIZED") {
-        router.push("/sign-in");
-      }
+  const purchase = useMutation(
+    trpc.checkout.purchase.mutationOptions({
+      onMutate: () => {
+        setStates({ success: false, cancel: false });
+      },
+      onSuccess: (data) => {
+        window.location.href = data.url;
+      },
+      onError: (error) => {
+        if (error.data?.code === "UNAUTHORIZED") {
+          router.push("/sign-in");
+        }
+        toast.error(error.message);
+      },
+    })
+  );
 
-      toast.error(error.message);
-    },
-  }));
+  const confirmPurchase = useMutation(
+    trpc.checkout.confirmPurchase.mutationOptions({
+      onSuccess: () => {
+        clearCart();
+        queryClient.invalidateQueries(trpc.library.getMany.infiniteQueryFilter());
+        router.push("/library");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+        // Still clear cart and go to library even if confirmation fails (webhook may handle it)
+        clearCart();
+        router.push("/library");
+      },
+    })
+  );
 
   useEffect(() => {
     if (states.success) {
+      const sessionId = searchParams.get("session_id");
+      if (sessionId) {
+        confirmPurchase.mutate({ sessionId });
+      } else {
+        // If no session ID (e.g., someone manually typed ?success=true), just clear and go
+        clearCart();
+        router.push("/library");
+      }
       setStates({ success: false, cancel: false });
-      clearCart();
-      queryClient.invalidateQueries(trpc.library.getMany.infiniteQueryFilter());
-      router.push("/library");
     }
-  }, [
-    states.success, 
-    clearCart, 
-    router, 
-    setStates,
-    queryClient,
-    trpc.library.getMany,
-  ]);
-  
+  }, [states.success, searchParams, confirmPurchase, clearCart, router, setStates]);
+
   useEffect(() => {
     if (error?.data?.code === "NOT_FOUND") {
       clearCart();
@@ -73,7 +89,7 @@ export const CheckoutView = ({}: CheckoutViewProps) => {
           <LoaderIcon className="text-muted-foreground animate-spin" />
         </div>
       </div>
-    )
+    );
   }
 
   if (data?.totalDocs === 0) {
@@ -90,7 +106,6 @@ export const CheckoutView = ({}: CheckoutViewProps) => {
   return (
     <div className="lg:pt-16 pt-4 px-4 lg:px-12">
       <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 lg:gap-16">
-
         <div className="lg:col-span-4">
           <div className="border rounded-md overflow-hidden bg-white">
             {data?.docs.map((product, index) => (
@@ -106,7 +121,6 @@ export const CheckoutView = ({}: CheckoutViewProps) => {
             ))}
           </div>
         </div>
-
         <div className="lg:col-span-3">
           <CheckoutSidebar
             total={data?.totalPrice || 0}
@@ -115,7 +129,6 @@ export const CheckoutView = ({}: CheckoutViewProps) => {
             disabled={purchase.isPending}
           />
         </div>
-
       </div>
     </div>
   );

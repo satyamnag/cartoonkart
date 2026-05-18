@@ -60,7 +60,7 @@ export const checkoutRouter = createTRPCRouter({
 
       const checkout = await stripe.checkout.sessions.create({
         customer_email: ctx.session.user.email,
-        success_url: `${baseUrl}/checkout?success=true`,
+        success_url: `${baseUrl}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${baseUrl}/checkout?cancel=true`,
         mode: "payment",
         line_items: lineItems,
@@ -79,6 +79,53 @@ export const checkoutRouter = createTRPCRouter({
 
       return { url: checkout.url };
     }),
+
+  confirmPurchase: protectedProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Retrieve the Stripe session
+      const session = await stripe.checkout.sessions.retrieve(input.sessionId);
+
+      if (!session?.metadata?.userId || !session?.metadata?.productIds) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid session data" });
+      }
+
+      const userId = session.metadata.userId;
+      const productIds: string[] = JSON.parse(session.metadata.productIds);
+
+      // Ensure the session belongs to the logged‑in user
+      if (userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Session does not belong to you" });
+      }
+
+      // Create orders (idempotent – skip if already exists)
+      for (const productId of productIds) {
+        const existing = await ctx.db.find({
+          collection: "orders",
+          where: {
+            and: [
+              { stripeCheckoutSessionId: { equals: input.sessionId } },
+              { product: { equals: productId } },
+            ],
+          },
+          limit: 1,
+        });
+        if (existing.docs.length > 0) continue;
+
+        await ctx.db.create({
+          collection: "orders",
+          data: {
+            stripeCheckoutSessionId: input.sessionId,
+            user: userId,
+            product: productId,
+            name: `Order for session ${input.sessionId}`,
+          },
+        });
+      }
+
+      return { success: true };
+    }),
+
   getProducts: baseProcedure
     .input(
       z.object({
